@@ -56,7 +56,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 void Game::PlaceBall() {
   int x, y;
   x = random_w(engine);
-  y = random_h(engine);
+  y = 0;
 
   ball.setPosition(static_cast<float>(x), static_cast<float>(y));
   ball.setDirection(0.0f, 1.0f);
