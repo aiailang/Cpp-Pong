@@ -3,6 +3,7 @@
 #include <iostream>
 #include "paddle.h"
 
+#define Pi 3.1415926f
 
 void Ball::setSpeed(float init_speed)
 {
@@ -63,7 +64,17 @@ bool Ball::Move(Paddle& paddle)
         && m_pos_x >= paddle.getPosX()
         && m_pos_x <= paddle.getPosX()+paddle.getLength()
     ){
-        m_dir_y = -fabs(m_dir_y);
+        const float MaxBounceAngle = Pi*5/12;
+        // reflection angle computed based on the collision point at the board
+        // https://gamedev.stackexchange.com/questions/4253/in-pong-how-do-you-calculate-the-balls-direction-when-it-bounces-off-the-paddl
+        float relativeIntersectX = (paddle.getPosX()+paddle.getLength()/2.0f)-m_pos_x;
+        float bounceAngle = relativeIntersectX/(paddle.getLength()/2.0f)*MaxBounceAngle;
+
+        //printf("rel %f angle %f\n", relativeIntersectX, bounceAngle);
+        //    o
+        //----------------
+        m_dir_x = sin(bounceAngle);
+        m_dir_y = -cos(bounceAngle);
         hit = true;
     }
 

@@ -59,7 +59,7 @@ void Game::PlaceBall() {
   y = random_h(engine);
 
   ball.setPosition(static_cast<float>(x), static_cast<float>(y));
-  ball.setDirection(0.1f, 0.1f);
+  ball.setDirection(0.0f, 1.0f);
 }
 
 void Game::Update() {

@@ -28,7 +28,7 @@ class Ball {
   bool Move(Paddle& paddle);
 
  private:
-  float m_speed{1.0f};
+  float m_speed{0.2f};
 
   float m_pos_x;
   float m_pos_y;
