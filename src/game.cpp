@@ -8,7 +8,12 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
       engine(dev()),
       random_w(0, static_cast<int>(grid_width)),
       random_h(0, static_cast<int>(grid_height)) {
-  PlaceBall();
+
+  int num_ball = 2;
+  for (int i = 0; i < num_ball; i++) {
+    _balls.push_back(std::make_shared<Ball>(grid_width, grid_height));
+    PlaceBall(_balls.at(i));
+  }
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -20,6 +25,8 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   int frame_count = 0;
   bool running = true;
 
+  
+
   while (running) {
     frame_start = SDL_GetTicks();
 
@@ -27,8 +34,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     //controller.HandleInput(running, snake);
     controller.HandleInput(running, paddle);
     Update();
-    renderer.Render(ball, paddle);
-    //renderer.Render(snake, food);
+    renderer.Render(_balls, paddle);
 
     frame_end = SDL_GetTicks();
 
@@ -53,18 +59,20 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   }
 }
 
-void Game::PlaceBall() {
+void Game::PlaceBall(std::shared_ptr<Ball> ball) {
   int x, y;
   x = random_w(engine);
   y = 0;
 
-  ball.setPosition(static_cast<float>(x), static_cast<float>(y));
-  ball.setDirection(0.0f, 1.0f);
+  ball->setPosition(static_cast<float>(x), static_cast<float>(y));
+  ball->setDirection(0.0f, 1.0f);
 }
 
 void Game::Update() {
-  if (ball.Move(paddle)) {
-    score++;
+  for (int i = 0; i < _balls.size(); i++) {
+    if (_balls.at(i)->Move(paddle)) {
+      score++;
+    }
   }
 }
 

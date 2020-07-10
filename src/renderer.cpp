@@ -54,7 +54,7 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(Ball const ball, Paddle const paddle) {
+void Renderer::Render(std::vector<std::shared_ptr<Ball>>& _balls, Paddle const paddle) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -64,13 +64,15 @@ void Renderer::Render(Ball const ball, Paddle const paddle) {
   SDL_RenderClear(sdl_renderer);
 
   // Render ball
-  block.x = static_cast<int>(ball.getPositionX() * block.w);
-  block.y = static_cast<int>(ball.getPositionY() * block.h);
+  for (auto ball : _balls) {
+  block.x = static_cast<int>(ball->getPositionX() * block.w);
+  block.y = static_cast<int>(ball->getPositionY() * block.h);
   if (ball_tex) {
     SDL_RenderCopy(sdl_renderer, ball_tex, NULL, &block);
   } else {
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderFillRect(sdl_renderer, &block);
+  }
   }
 
   // Render paddle

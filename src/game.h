@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <random>
+#include <vector>
 #include "SDL.h"
 #include "controller.h"
 #include "renderer.h"
@@ -16,6 +17,7 @@ class Game {
   int GetScore() const;
 
  private:
+  std::vector<std::shared_ptr<Ball>> _balls;
   Ball ball;
   Paddle paddle;
 
@@ -26,7 +28,7 @@ class Game {
   
   int score{0};
 
-  void PlaceBall();
+  void PlaceBall(std::shared_ptr<Ball> ball);
   void Update();
 };
 

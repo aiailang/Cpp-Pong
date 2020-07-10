@@ -13,7 +13,7 @@ class Renderer {
   ~Renderer();
 
 
-  void Render(Ball const ball, Paddle const paddle);
+  void Render(std::vector<std::shared_ptr<Ball>>& _balls, Paddle const paddle);
   void UpdateWindowTitle(int score, int fps);
 
  private:
