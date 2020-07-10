@@ -4,7 +4,7 @@
 
 Game::Game(std::size_t grid_width, std::size_t grid_height)
     : ball(grid_width, grid_height),
-      paddle(4.0f, 1.0f, grid_width/2.0f, grid_height-1.0f),
+      paddle(5.0f, 1.0f, grid_width/2.0f, grid_height-1.0f),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width)),
       random_h(0, static_cast<int>(grid_height)) {

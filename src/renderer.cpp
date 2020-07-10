@@ -1,6 +1,7 @@
 #include "renderer.h"
 #include <iostream>
 #include <string>
+#include <SDL_image.h>
 
 Renderer::Renderer(const std::size_t screen_width,
                    const std::size_t screen_height,
@@ -31,9 +32,24 @@ Renderer::Renderer(const std::size_t screen_width,
     std::cerr << "Renderer could not be created.\n";
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
   }
+
+  //surface = SDL_LoadBMP("../img/ball.bmp");
+  SDL_Surface* ball_surface = IMG_Load("../img/ball.png");
+  if (!ball_surface) {
+    std::cerr << "Surface could not be created.\n";
+    std::cerr << " SDL_Error: " << SDL_GetError() << "\n";
+  }
+
+  ball_tex = SDL_CreateTextureFromSurface(sdl_renderer, ball_surface);
+  if (!ball_tex) {
+    std::cerr << "Texture could not be created.\n";
+    std::cerr << " SDL_Error: " << SDL_GetError() << "\n";
+  }
+  SDL_FreeSurface(ball_surface);
 }
 
 Renderer::~Renderer() {
+  SDL_DestroyTexture(ball_tex);
   SDL_DestroyWindow(sdl_window);
   SDL_Quit();
 }
@@ -48,10 +64,14 @@ void Renderer::Render(Ball const ball, Paddle const paddle) {
   SDL_RenderClear(sdl_renderer);
 
   // Render ball
-  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
   block.x = static_cast<int>(ball.getPositionX() * block.w);
   block.y = static_cast<int>(ball.getPositionY() * block.h);
-  SDL_RenderFillRect(sdl_renderer, &block);
+  if (ball_tex) {
+    SDL_RenderCopy(sdl_renderer, ball_tex, NULL, &block);
+  } else {
+    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderFillRect(sdl_renderer, &block);
+  }
 
   // Render paddle
   SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);

@@ -1,7 +1,7 @@
 # Pong Game
 
 This is a simple pong game developped in C++ as the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). 
-For more information of the [Pong game in Wikipedia](https://en.wikipedia.org/wiki/Pong).
+For more information of the [Pong game](https://en.wikipedia.org/wiki/Pong) in Wikipedia.
 
 The game only supports one player, who can score by hitting the ball with the paddle.
 
@@ -15,6 +15,8 @@ The game only supports one player, who can score by hitting the ball with the pa
 * SDL2 >= 2.0
   * All installation instructions can be found [here](https://wiki.libsdl.org/Installation)
   * Note that for Linux, an `apt` or `apt-get` installation is preferred to building from source.
+* SDL_image >= 2.0
+  * All information can be found [here](https://www.libsdl.org/projects/SDL_image/)
 * gcc/g++ >= 5.4
   * Linux: gcc / g++ is installed by default on most Linux distros
   * Mac: same deal as make - [install Xcode command line tools](https://developer.apple.com/xcode/features/)
