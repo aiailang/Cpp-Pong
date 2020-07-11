@@ -1,9 +1,23 @@
 #include "ball.h"
 #include <cmath>
 #include <iostream>
+#include "SDL.h"
 #include "paddle.h"
 
 #define Pi 3.1415926f
+
+Ball::~Ball() {
+    // set up thread barrier before this object is destroyed
+    std::for_each(threads.begin(), threads.end(), [](std::thread &t) {
+        t.join();
+    });
+}
+
+void Ball::Simulate(std::size_t target_frame_duration) {
+    // launch drive function in a thread
+    running = true;
+    threads.emplace_back(std::thread(&Ball::Move, this, target_frame_duration));
+}
 
 void Ball::setSpeed(float init_speed)
 {
@@ -32,12 +46,59 @@ float Ball::getPositionY() const
     return m_pos_y;
 }
 
-bool Ball::Move(Paddle& paddle)
+void Ball::stop() {
+    std::lock_guard<std::mutex> lck(mtx);
+    running = false;
+}
+
+void Ball::Move(std::size_t target_frame_duration)
 {
-    bool hit = false;
+  Uint32 title_timestamp = SDL_GetTicks();
+  Uint32 frame_start;
+  Uint32 frame_end;
+  Uint32 frame_duration;
+  int frame_count = 0;
+
+  while (true) {
+    frame_start = SDL_GetTicks();
+
+    std::unique_lock<std::mutex> lck(mtx);
 
     m_pos_x += m_speed*m_dir_x;
     m_pos_y += m_speed*m_dir_y;
+
+    if (!running) {
+        break;
+    }
+
+    lck.unlock();
+
+    frame_end = SDL_GetTicks();
+
+    // Keep track of how long each loop through the input/update/render cycle
+    // takes.
+    frame_count++;
+    frame_duration = frame_end - frame_start;
+
+    // After every second, update the window title.
+    if (frame_end - title_timestamp >= 1000) {
+      frame_count = 0;
+      title_timestamp = frame_end;
+    }
+
+    // If the time for this frame is too small (i.e. frame_duration is
+    // smaller than the target ms_per_frame), delay the loop to
+    // achieve the correct frame rate.
+    if (frame_duration < target_frame_duration) {
+      SDL_Delay(target_frame_duration - frame_duration);
+    }
+  }
+}
+
+bool Ball::DetectCollision(Paddle& paddle) {
+    bool hit = false;
+
+    std::lock_guard<std::mutex> lck(mtx);
 
     // hit left wall
     if (m_pos_x < 0) {

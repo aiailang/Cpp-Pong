@@ -25,8 +25,16 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   int frame_count = 0;
   bool running = true;
 
-  
-
+  #if 0
+  for (auto ball : _balls) {
+    ball->Simulate(target_frame_duration);
+  }
+  #endif
+  #if 1
+  std::for_each(_balls.begin(), _balls.end(), [=](std::shared_ptr<Ball> &ball) {
+    ball->Simulate(target_frame_duration);
+  });
+  #endif
   while (running) {
     frame_start = SDL_GetTicks();
 
@@ -57,6 +65,11 @@ void Game::Run(Controller const &controller, Renderer &renderer,
       SDL_Delay(target_frame_duration - frame_duration);
     }
   }
+
+  int size = _balls.size();
+  for (int i = 0; i < size; i++) {
+    _balls.at(i)->stop();
+  }
 }
 
 void Game::PlaceBall(std::shared_ptr<Ball> ball) {
@@ -70,7 +83,7 @@ void Game::PlaceBall(std::shared_ptr<Ball> ball) {
 
 void Game::Update() {
   for (int i = 0; i < _balls.size(); i++) {
-    if (_balls.at(i)->Move(paddle)) {
+    if (_balls.at(i)->DetectCollision(paddle)) {
       score++;
     }
   }
